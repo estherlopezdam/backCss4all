@@ -13,22 +13,24 @@ function App() {
     setError("");
     setResult(null);
 
-    try {
+   
+      const API_URL = import.meta.env.PUBLIC_API_URL;
       
-      const response = await fetch("/api/scrape-proxy", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
-      });
-      const data = await response.json();
-      if (response.ok) setResult(data);
-      else setError(data.error || "Error desconocido");
-    } catch (err) {
-      setError(err.message || "Error de red");
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        const response = await fetch(`${API_URL}/scrape`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url }),
+        });
+        const data = await response.json();
+        if (response.ok) setResult(data);
+        else setError(data.error || "Error desconocido");
+      } catch (err) {
+        setError(err.message || "Error de red");
+      } finally {
+        setLoading(false);
+      }
+    };
 
   const groupBlocksByType = (blocks) => {
     const grouped = {
