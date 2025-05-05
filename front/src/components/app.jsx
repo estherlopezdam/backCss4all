@@ -5,7 +5,7 @@ function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const API_URL = import.meta.env.PUBLIC_API_URL;
+ 
 
   const handleScrape = async () => {
     if (!url) return;
@@ -14,8 +14,8 @@ function App() {
     setResult(null);
 
     try {
-      console.log("URL de la API:", import.meta.env.PUBLIC_API_URL);
-      const response = await fetch(`${import.meta.env.PUBLIC_API_URL}/scrape`, {
+      
+      const response = await fetch("/api/scrape-proxy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
