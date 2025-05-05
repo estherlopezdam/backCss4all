@@ -1,28 +1,32 @@
-export default async function handler(req, res) {
-    const API_URL = process.env.PUBLIC_API_URL;
-  
-    if (req.method !== 'POST') {
-      return res.status(405).json({ error: 'Solo se permiten peticiones POST  ' });
-    }
+export async function POST({ request }) {
+    const body = await request.json();
+    const API_URL = import.meta.env.PUBLIC_API_URL;
   
     try {
-      const response = await fetch(`${API_URL}:3001/scrape`, {
+      const response = await fetch(`${API_URL}/scrape`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(req.body),
+        body: JSON.stringify(body),
       });
   
       const contentType = response.headers.get('content-type') || '';
-  
       if (contentType.includes('application/json')) {
         const data = await response.json();
-        res.status(response.status).json(data);
+        return new Response(JSON.stringify(data), {
+          status: response.status,
+          headers: { 'Content-Type': 'application/json' }
+        });
       } else {
         const text = await response.text();
-        res.status(500).json({ error: 'La API no devolvió JSON', detalle: text });
+        return new Response(JSON.stringify({ error: 'La API no devolvió JSON', detalle: text }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
       }
     } catch (error) {
-      console.error('Error en el proxy:', error);
-      res.status(500).json({ error: 'Error en el proxy', detalle: error.message });
+      return new Response(JSON.stringify({ error: 'Error en el proxy', detalle: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
   }
